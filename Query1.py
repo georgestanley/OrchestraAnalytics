@@ -58,7 +58,7 @@ def get_all_data():
                            "order by total.Orchestra, share desc")
 
     cursor.execute(sqlite_select_Query)
-    print('query = ' ,sqlite_select_Query)
+    print('query = ', sqlite_select_Query)
     data = (row for row in cursor.fetchall())
     cursor.close()
     root = tk.Tk()
@@ -409,25 +409,26 @@ def populate_country_list():
 
 
 def get_country_data():
-    country = variable.get() # GET the country name
+    country = variable.get()  # GET the country name
     if country == 'None':
         country = 'null'
     cursor = sqliteConnection.cursor()
     sqlite_select_Query = (
-        'select pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra,group_concat(pl.program) program, '
-        'group_concat(distinct c.conductor) conductor\n '
-        'from programs_all pa, program_list pl ,conductors c\n'
-        'where 1=1\n'
-        'and pa.event_id=pl.event_id\n'
-        'and pa.event_id=c.event_id\n'
-        'and pa.country = \''+country+'\'\n'
-        'group by pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra;')
+            'select pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra,group_concat(pl.program) program, '
+            'group_concat(distinct c.conductor) conductor\n '
+            'from programs_all pa, program_list pl ,conductors c\n'
+            'where 1=1\n'
+            'and pa.event_id=pl.event_id\n'
+            'and pa.event_id=c.event_id\n'
+            'and pa.country = \'' + country + '\'\n'
+                                              'group by pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra;')
     print(sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     data = (row for row in x)
     root = tk.Tk()
-    table = Table(root, headings=('Event-ID','Date', 'Country', 'City', 'Orchestra', 'Program','Conductor'), rows=data)
+    table = Table(root, headings=('Event-ID', 'Date', 'Country', 'City', 'Orchestra', 'Program', 'Conductor'),
+                  rows=data)
     # print('record count =', type(data))
     table.pack(expand=tk.YES, fill=tk.BOTH)
     root.mainloop()
@@ -435,7 +436,7 @@ def get_country_data():
 
 if __name__ == '__main__':
     try:
-        sqliteConnection = sqlite3.connect('test_1.db')
+        sqliteConnection = sqlite3.connect("C:\\sqlite\\test_1.db")
         cursor = sqliteConnection.cursor()
         print("Database created and Successfully Connected to SQLite")
 
@@ -520,7 +521,6 @@ if __name__ == '__main__':
     popupMenu.grid(row=row_n, column=1)
     btn = Button(window, text='Execute', command=get_country_data)
     btn.grid(column=2, row=row_n)
-
 
     window.mainloop()
 
