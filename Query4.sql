@@ -1,8 +1,9 @@
-select * from programs_temp where dirigent in ('György Cziffra d.J.', 'György Csiffra jun', 'IK');
+select * from programs_temp where dirigent in ('György Cziffra d.J.', 'György Csiffra jun', 'FL');
 select * from programs_temp where dirigent like '%Csiffra%';
+select * from conductors where conductor like '%FL%';
 
 
---Spelling mistakes correction
+--Spelling mistakes correction . Execute if needed
 update programs_temp set dirigent =  'Leopold Ludwig' where dirigent='LL';
 update programs_temp set dirigent =  'Fritz Rieger' where dirigent='FR';
 update programs_temp set dirigent =  'István Kertész' where dirigent='IK';
@@ -32,6 +33,18 @@ update conductors set conductor =  'György Cziffra' where conductor='György Cz
 update conductors set conductor =  'Rafael Kubelík' where conductor='Kubelik';
 update conductors set conductor =  'Wilhelm Österreicher' where conductor='Wilheln Österreicher';
 update conductors set conductor =  'Wolfgang Sawallisch' where conductor='Sawallisch';
+
+
+--Part4
+select pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra,group_concat(pl.program) program, group_concat(distinct c.conductor) conductor
+from programs_all pa, program_list pl ,conductors c
+where 1=1
+and pa.event_id=pl.event_id
+and pa.event_id=c.event_id
+--and c.conductor ='Eduard Kremser'
+group by pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra;
+
+select * from conductors where conductor='Felix von Weingartner';
 
 
 
