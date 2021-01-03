@@ -257,6 +257,7 @@ def get_chart():
                                                                                                                                                                    "where pageviews.Orchestra=total.Orchestra\n"
                                                                                                                                                                    "order by total.Orchestra, share desc) \n"
                                                                                                                                                                    "group by country")
+    print(sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     # data = (row for row in x)

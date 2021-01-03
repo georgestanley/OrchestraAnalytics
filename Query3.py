@@ -13,6 +13,7 @@ from tkinter import *
 from tkinter.ttk import *
 import sqlite3
 
+
 # import table_demo as td
 
 class Table(tk.Frame):
@@ -95,28 +96,28 @@ def get_dates():
                            '    count(*) counts\n'
                            'from programs_all\n'
                            'where 1=1\n'
-                            'and date_of_event  between \'' + d1_val + '\' and \'' + d2_val + '\' \n'
-                           'group by Orchestra, Country)\n'
-                           'group by Orchestra )\n'
-                           '\n'
-                           'select total.Orchestra,Continent,total.total, counts,\n'
-                           '    round(((counts *1.0) /total.total)*100,2) as share\n'
-                           'from (select \n'
-                           '    Orchestra,\n'
-                           '    --Country,\n'
-                           '    continents.continent,\n'
-                           '    count(*) counts\n'
-                           'from programs_all, continents\n'
-                           'where 1=1\n'
-                           'and programs_all.country = continents.country\n'
-                            'and date_of_event  between \'' + d1_val + '\' and \'' + d2_val + '\' \n'
-                           'group by Orchestra\n'
-                           '--, Country\n'
-                           ',Continent) pageviews,\n'
-                           '    total\n'
-                           'where pageviews.Orchestra=total.Orchestra\n'
-                           'order by total.Orchestra, share desc')
-    #print('SQL query = ', sqlite_select_Query)
+                           'and date_of_event  between \'' + d1_val + '\' and \'' + d2_val + '\' \n'
+                                                                                             'group by Orchestra, Country)\n'
+                                                                                             'group by Orchestra )\n'
+                                                                                             '\n'
+                                                                                             'select total.Orchestra,Continent,total.total, counts,\n'
+                                                                                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                                                                                             'from (select \n'
+                                                                                             '    Orchestra,\n'
+                                                                                             '    --Country,\n'
+                                                                                             '    continents.continent,\n'
+                                                                                             '    count(*) counts\n'
+                                                                                             'from programs_all, continents\n'
+                                                                                             'where 1=1\n'
+                                                                                             'and programs_all.country = continents.country\n'
+                                                                                             'and date_of_event  between \'' + d1_val + '\' and \'' + d2_val + '\' \n'
+                                                                                                                                                               'group by Orchestra\n'
+                                                                                                                                                               '--, Country\n'
+                                                                                                                                                               ',Continent) pageviews,\n'
+                                                                                                                                                               '    total\n'
+                                                                                                                                                               'where pageviews.Orchestra=total.Orchestra\n'
+                                                                                                                                                               'order by total.Orchestra, share desc')
+    # print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     data = (row for row in x)
@@ -132,31 +133,44 @@ def get_dates_csv():
     d2_val = d2.get()
     # print('d1 =', d1_val, 'd2=', d2_val)
     cursor = sqliteConnection.cursor()
-    sqlite_select_Query = ("with total as\n"
-                           "    ( select Orchestra,sum(counts) as total\n"
-                           "    from (select \n"
-                           "    Orchestra,\n"
-                           "    Country,\n"
-                           "    count(*) counts\n"
-                           "from programs_all\n"
-                           "where 1=1\n"
-                           "    and date_of_event  between \'" + d1_val + "\' and \'" + d2_val + "\' \n"
-                                                                                                 "group by Orchestra, Country)\n"
-                                                                                                 "group by Orchestra )\n"
-                                                                                                 "\n"
-                                                                                                 "select total.Orchestra,Country,total.total, counts,\n"
-                                                                                                 "    round(((counts *1.0) /total.total)*100,2) as share\n"
-                                                                                                 "from (select \n"
-                                                                                                 "    Orchestra,\n"
-                                                                                                 "    Country,\n"
-                                                                                                 "    count(*) counts\n"
-                                                                                                 "from programs_all\n"
-                                                                                                 "where 1=1\n"
-                                                                                                 "and date_of_event  between \'" + d1_val + "\' and \'" + d2_val + "\' \n"
-                                                                                                                                                                   "group by Orchestra, Country) pageviews,\n"
-                                                                                                                                                                   "    total\n"
-                                                                                                                                                                   "where pageviews.Orchestra=total.Orchestra\n"
-                                                                                                                                                                   "order by total.Orchestra, share desc")
+    sqlite_select_Query = ('with total as\n'
+                           '    ( select Orchestra,sum(counts) as total\n'
+                           '    from (select \n'
+                           '    Orchestra,\n'
+                           '    Country,\n'
+                           '    count(*) counts\n'
+                           'from programs_all\n'
+                           'where 1=1\n'
+                           'and date_of_event  between \''
+                           + d1_val
+                           +
+                           '\' and \''
+                           + d2_val
+                           + '\' \n'
+                             'group by Orchestra, Country)\n'
+                             'group by Orchestra )\n'
+                             '\n'
+                             'select total.Orchestra,Continent,total.total, counts,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from (select \n'
+                             '    Orchestra,\n'
+                             '    --Country,\n'
+                             '    continents.continent,\n'
+                             '    count(*) counts\n'
+                             'from programs_all, continents\n'
+                             'where 1=1\n'
+                             'and programs_all.country = continents.country\n'
+                             'and date_of_event  between \''
+                           + d1_val
+                           + '\' and \''
+                           + d2_val
+                           + '\' \n'
+                             'group by Orchestra\n'
+                             '--, Country\n'
+                             ',Continent) pageviews,\n'
+                             '    total\n'
+                             'where pageviews.Orchestra=total.Orchestra\n'
+                             'order by total.Orchestra, share desc')
     # print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
@@ -191,39 +205,52 @@ def get_checkbox():
     print(append_string)
 
     cursor = sqliteConnection.cursor()
-    sqlite_select_Query = ("with total as\n"
-                           "    ( select Orchestra,sum(counts) as total\n"
-                           "    from (select \n"
-                           "    Orchestra,\n"
-                           "    Country,\n"
-                           "    count(*) counts\n"
-                           "from programs_all\n"
-                           "where 1=1\n"
-                           "and Orchestra in \n" + append_string +
-                           "    and date_of_event  between \'" + d3_val + "\' and \'" + d4_val + "\' \n"
-                                                                                                 "group by Orchestra, Country)\n"
-                                                                                                 "group by Orchestra )\n"
-                                                                                                 "\n"
-                                                                                                 "select total.Orchestra,Country,total.total, counts,\n"
-                                                                                                 "    round(((counts *1.0) /total.total)*100,2) as share\n"
-                                                                                                 "from (select \n"
-                                                                                                 "    Orchestra,\n"
-                                                                                                 "    Country,\n"
-                                                                                                 "    count(*) counts\n"
-                                                                                                 "from programs_all\n"
-                                                                                                 "where 1=1\n"
-                                                                                                 "    and date_of_event  between \'" + d3_val + "\' and \'" + d4_val + "\' \n"
-                                                                                                                                                                       "group by Orchestra, Country) pageviews,\n"
-                                                                                                                                                                       "    total\n"
-                                                                                                                                                                       "where pageviews.Orchestra=total.Orchestra\n"
-                                                                                                                                                                       "order by total.Orchestra, share desc"
-                           )
-    # print('SQL query = ', sqlite_select_Query)
+    sqlite_select_Query = ('with total as\n'
+                           '    ( select Orchestra,sum(counts) as total\n'
+                           '    from (select \n'
+                           '    Orchestra,\n'
+                           '    Country,\n'
+                           '    count(*) counts\n'
+                           'from programs_all\n'
+                           'where 1=1\n'
+                           'and Orchestra in \n'
+                           + append_string
+                           +
+                           'and date_of_event  between \''
+                           + d3_val
+                           +
+                           '\' and \''
+                           + d4_val
+                           + '\' \n'
+                             'group by Orchestra, Country)\n'
+                             'group by Orchestra )\n'
+                             '\n'
+                             'select total.Orchestra,Continent,total.total, counts,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from (select \n'
+                             '    Orchestra,\n'
+                             '    --Country,\n'
+                             '    Continents.continent,\n'
+                             '    count(*) counts\n'
+                             'from programs_all, continents\n'
+                             'where 1=1\n'
+                             'and programs_all.country = continents.country\n'
+                             'and date_of_event  between \''
+                           + d3_val
+                           +
+                           '\' and \''
+                           + d4_val
+                           + '\' \n'
+                             'group by Orchestra, Continent) pageviews,\n'
+                             '    total\n'
+                             'where pageviews.Orchestra=total.Orchestra\n'
+                             'order by total.Orchestra, share desc')
+    print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     data = (row for row in x)
     root = tk.Tk()
-    table = Table(root, headings=('Orchestra', 'Conductor', 'Total', 'Count', 'Share'), rows=data)
+    table = Table(root, headings=('Orchestra', 'Continent', 'Total', 'Count', 'Share'), rows=data)
     # print('record count =', type(data))
     table.pack(expand=tk.YES, fill=tk.BOTH)
     root.mainloop()
@@ -240,37 +267,51 @@ def get_chart():
     # d2_val = '1900-12-31'
     print('d1 =', d1_val, 'd2=', d2_val)
     cursor = sqliteConnection.cursor()
-
+    sqlite_select_Query = ('with total as\n'
+                           '    ( select Orchestra,sum(counts) as total\n'
+                           '    from (select \n'
+                           '    Orchestra,\n'
+                           '    Country,\n'
+                           '    count(*) counts\n'
+                           'from programs_all\n'
+                           'where 1=1\n'
+                           '--and Orchestra in (\'Vienna Philharmonic\')\n'
+                           'and date_of_event  between \''
+                           + d1_val
+                           +
+                           '\' and \''
+                           + d2_val
+                           + '\' \n'
+                             'group by Orchestra, Country)\n'
+                             'group by Orchestra )\n'
+                             '\n'
+                             'select Continent, sum(counts) xxx\n'
+                             'from  (\n'
+                             'select total.Orchestra,Continent,total.total, counts,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from (select \n'
+                             '    Orchestra,\n'
+                             '    --Country,\n'
+                             '    continents.continent,\n'
+                             '    count(*) counts\n'
+                             'from programs_all, continents\n'
+                             'where 1=1\n'
+                             'and programs_all.country = continents.country\n'
+                             'and date_of_event  between \''
+                           + d1_val
+                           +
+                           '\' and \''
+                           + d2_val
+                           + '\' \n'
+                             'group by Orchestra\n'
+                             '--, Country\n'
+                             ',Continent) pageviews,\n'
+                             '    total\n'
+                             'where pageviews.Orchestra=total.Orchestra\n'
+                             'order by total.Orchestra, share desc) \n'
+                             'group by Continent\n'
+                             'order by xxx desc')
     # print('SQL query = ', sqlite_select_Query)
-    sqlite_select_Query = ("with total as\n"
-                           "    ( select Orchestra,sum(counts) as total\n"
-                           "    from (select \n"
-                           "    Orchestra,\n"
-                           "    Country,\n"
-                           "    count(*) counts\n"
-                           "from programs_all\n"
-                           "where 1=1\n"
-                           "--and Orchestra in ('Vienna Philharmonic')\n"
-                           "and date_of_event  between \'" + d1_val + "\' and \'" + d2_val + "\' \n"
-                                                                                             "group by Orchestra, Country)\n"
-                                                                                             "group by Orchestra )\n"
-                                                                                             "\n"
-                                                                                             "select Country, sum(counts) xxx\n"
-                                                                                             "from  (\n"
-                                                                                             "select total.Orchestra,Country,total.total, counts,\n"
-                                                                                             "    round(((counts *1.0) /total.total)*100,2) as share\n"
-                                                                                             "from (select \n"
-                                                                                             "    Orchestra,\n"
-                                                                                             "    Country,\n"
-                                                                                             "    count(*) counts\n"
-                                                                                             "from programs_all\n"
-                                                                                             "where 1=1\n"
-                                                                                             "    and date_of_event  between \'" + d1_val + "\' and \'" + d2_val + "\' \n"
-                                                                                                                                                                   "group by Orchestra, Country) pageviews,\n"
-                                                                                                                                                                   "    total\n"
-                                                                                                                                                                   "where pageviews.Orchestra=total.Orchestra\n"
-                                                                                                                                                                   "order by total.Orchestra, share desc) \n"
-                                                                                                                                                                   "group by country")
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     # data = (row for row in x)
@@ -334,8 +375,8 @@ def get_chart():
 def get_chart_orchestra_wise():
     d3_val = d3.get()
     d4_val = d4.get()
-    # d3_val = '1900-01-01'
-    # d4_val = '1900-12-31'
+    #d3_val = '1950-01-01'
+    #d4_val = '1960-12-31'
     print('d1 =', d3_val, 'd2=', d4_val)
     cursor = sqliteConnection.cursor()
 
@@ -360,43 +401,57 @@ def get_chart_orchestra_wise():
     append_string = "(" + append_string + ")"
     print(append_string)
 
-    sqlite_select_Query = ("\n"
-                           "with total as\n"
-                           "    ( select Orchestra,sum(counts) as total\n"
-                           "    from (select \n"
-                           "    Orchestra,\n"
-                           "    Country,\n"
-                           "    count(*) counts\n"
-                           "from programs_all\n"
-                           "where 1=1\n"
-                           "--and Orchestra in ('Vienna Philharmonic')\n"
-                           "    and date_of_event  between \'" + d3_val + "\' and \'" + d4_val + "\' \n"
-                                                                                                 "group by Orchestra, Country)\n"
-                                                                                                 "group by Orchestra )\n"
-                                                                                                 "\n"
-                                                                                                 "select total.Orchestra,Country,total.total, counts,\n"
-                                                                                                 "    round(((counts *1.0) /total.total)*100,2) as share\n"
-                                                                                                 "from (select \n"
-                                                                                                 "    Orchestra,\n"
-                                                                                                 "    Country,\n"
-                                                                                                 "    count(*) counts\n"
-                                                                                                 "from programs_all\n"
-                                                                                                 "where 1=1\n"
-                                                                                                 "    and date_of_event  between \'" + d3_val + "\' and \'" + d4_val + "\' \n"
-                                                                                                                                                                       "group by Orchestra, Country) pageviews,\n"
-                                                                                                                                                                       "    total\n"
-                                                                                                                                                                       "where pageviews.Orchestra=total.Orchestra\n"
-                                                                                                                                                                       "and total.Orchestra in \n" + append_string +
-                           "order by total.Orchestra, share desc;\n")
-
+    sqlite_select_Query = ('with total as\n'
+                           '    ( select Orchestra,sum(counts) as total\n'
+                           '    from (select \n'
+                           '    Orchestra,\n'
+                           '    Country,\n'
+                           '    count(*) counts\n'
+                           'from programs_all\n'
+                           'where 1=1\n'
+                           '--and Orchestra in (\'Vienna Philharmonic\')\n'
+                           'and date_of_event  between \''
+                           + d3_val
+                           +
+                           '\' and \''
+                           + d4_val
+                           + '\' \n'                           'group by Orchestra, Country)\n'
+                             'group by Orchestra )\n'
+                             '\n'
+                             'select continent,sum(counts) xxx\n'
+                             'from (\n'
+                             'select total.Orchestra,Continent,total.total, counts,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from (select \n'
+                             '    Orchestra,\n'
+                             '    --Country,\n'
+                             '    continents.continent,\n'
+                             '    count(*) counts\n'
+                             'from programs_all , continents\n'
+                             'where 1=1\n'
+                             'and programs_all.country=continents.country\n'
+                             'and date_of_event  between \''
+                           + d3_val
+                           +
+                           '\' and \''
+                           + d4_val
+                           + '\' \n'
+                             'group by Orchestra, continent) pageviews,\n'
+                             '    total\n'
+                             'where pageviews.Orchestra=total.Orchestra\n'
+                             'and total.Orchestra in \n'
+                           + append_string
+                           +
+                           'order by total.Orchestra, share desc)\n'
+                           'group by continent')
+    print(sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     data = []
     values = []
-    i = 0
     for row in x:
-        data.append(row[1])
-        values.append(row[4])
+        data.append(row[0])
+        values.append(row[1])
     print(data)
     print(values)
     # counts = Counter(orchestra)
@@ -414,34 +469,37 @@ def populate_country_list():
     :return: List of all countries
     """
     cursor = sqliteConnection.cursor()
-    sqlite_select_Query = '''select distinct country from programs_all order by country;'''
+    sqlite_select_Query = '''select distinct continent from continents order by continent;'''
     x = cursor.execute(sqlite_select_Query)
-    countries = ['Choose a country']
+    countries = ['Choose a continent']
     for row in x:
         countries.append(row[0])
     return countries
 
 
-def get_country_data():
-    country = variable.get()  # GET the country name
-    if country == 'None':
-        country = 'null'
+def get_continent_data():
+    continent = variable.get()  # GET the country name
+    if continent == 'None':
+        continent = 'null'
     cursor = sqliteConnection.cursor()
-    sqlite_select_Query = (
-            'select pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra,group_concat(pl.program) program, '
-            'group_concat(distinct c.conductor) conductor\n '
-            'from programs_all pa, program_list pl ,conductors c\n'
-            'where 1=1\n'
-            'and pa.event_id=pl.event_id\n'
-            'and pa.event_id=c.event_id\n'
-            'and pa.country = \'' + country + '\'\n'
-                                              'group by pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra;')
+    sqlite_select_Query= (
+        'select pa.event_id, pa.date_of_event,co.continent, pa.country, pa.place, pa.Orchestra,'
+        'group_concat(pl.program) program, group_concat(distinct c.conductor) conductor\n'
+        ' from programs_all pa, program_list pl ,conductors c, continents co\n'
+        'where 1=1\n'
+        'and pa.event_id=pl.event_id\n'
+        'and pa.event_id=c.event_id\n'
+        'and pa.country= co.country\n'
+        'and co.continent = \''
+        + continent
+        + '\'\n'
+        'group by pa.event_id, pa.date_of_event,co.continent, pa.country, pa.place, pa.Orchestra')
     print(sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     data = (row for row in x)
     root = tk.Tk()
-    table = Table(root, headings=('Event-ID', 'Date', 'Country', 'City', 'Orchestra', 'Program', 'Conductor'),
+    table = Table(root, headings=('Event-ID', 'Date', 'Continent', 'Country', 'City', 'Orchestra', 'Program', 'Conductor'),
                   rows=data)
     # print('record count =', type(data))
     table.pack(expand=tk.YES, fill=tk.BOTH)
@@ -529,11 +587,11 @@ if __name__ == '__main__':
     variable = StringVar(window)  # Creates a TKinter Variable
     variable.set(choices[0])  # set default value
     # tkvar.set('Pizza')  # set the default option
-    lbl3 = Label(window, text="Query4 :: Query the entire database for the given Country")
+    lbl3 = Label(window, text="Query4 :: Query the entire database for the given Continent")
     lbl3.grid(row=row_n, column=0)
     popupMenu = OptionMenu(window, variable, *choices)
     popupMenu.grid(row=row_n, column=1)
-    btn = Button(window, text='Execute', command=get_country_data)
+    btn = Button(window, text='Execute', command=get_continent_data)
     btn.grid(column=2, row=row_n)
 
     window.mainloop()
