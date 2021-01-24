@@ -47,5 +47,27 @@ group by pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra;
 select * from conductors where conductor='Felix von Weingartner';
 
 
+WITH total as
+    ( select Orchestra,sum(counts) as total
+    from (select Orchestra, conductor, count(*) counts
+        from programs_all pa, conductors c
+        where pa.event_id = c.event_id
+        and orchestra in ("Vienna Philharmonic")
+        and date_of_event  between '1900-01-01' and '1905-12-31' 
+        group by Orchestra,conductor)
+    group by Orchestra )
+
+select total.Orchestra,Conductor,total.total, counts ,
+    round(((counts *1.0) /total.total)*100,2) as share
+from (select Orchestra, conductor, count(*) counts
+    from programs_all pa, conductors c
+    where pa.event_id = c.event_id
+    and date_of_event  between '1900-01-01' and '1905-12-31'
+group by Orchestra,conductor) pageviews,
+    total
+where pageviews.Orchestra=total.Orchestra
+order by total.Orchestra,counts desc;
+
+
 
 
