@@ -5,11 +5,13 @@ import tkinter.ttk as ttk
 from tkinter import *
 from tkinter.ttk import *
 import sqlite3
+from SqlConnection import sqliteConnection
+from Table import Table
 
 
 # import table_demo as td
 
-class Table(tk.Frame):
+class SSG(tk.Frame):
     def __init__(self, parent=None, headings=tuple(), rows=tuple()):
         super().__init__(parent)
 
@@ -436,20 +438,6 @@ def get_country_data():
 
 
 if __name__ == '__main__':
-    try:
-        sqliteConnection = sqlite3.connect("C:\\sqlite\\test_1.db")
-        cursor = sqliteConnection.cursor()
-        print("Database created and Successfully Connected to SQLite")
-
-        sqlite_select_Query = "select sqlite_version();"
-        cursor.execute(sqlite_select_Query)
-        record = cursor.fetchall()
-        print("SQLite Database Version is: ", record)
-        cursor.close()
-
-    except sqlite3.Error as error:
-        print("Error while connecting to sqlite", error)
-
     window = tk.Tk()
     window.title("Orchestra Tours Data - Dr. Friedemann Pestel")
     window.geometry('1000x500')
@@ -524,5 +512,4 @@ if __name__ == '__main__':
     btn.grid(column=2, row=row_n)
 
     window.mainloop()
-
     sqliteConnection.close()

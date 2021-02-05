@@ -166,8 +166,9 @@ def get_dates_csv():
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     # print(rows)
-    csvWriter = csv.writer(open("output.csv", "w"), lineterminator='\n')
+    csvWriter = csv.writer(open("output.csv", "w", encoding="utf-8"), lineterminator='\n')
     csvWriter.writerows(x)
+    print('output printed')
     cursor.close()
 
 def get_chart():
@@ -517,7 +518,8 @@ def get_chart_orchestra_wise():
 
 if __name__ == '__main__':
     try:
-        sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
+        ##sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
+        sqliteConnection = sqlite3.connect('test_1.db')
         cursor = sqliteConnection.cursor()
         print("Database created and Successfully Connected to SQLite")
 

@@ -96,7 +96,7 @@ def get_dates():
                          "    total\n"
                          "where pageviews2.Orchestra=total.Orchestra\n"
                          "order by total.Orchestra, share desc")
-    # print('SQL query = ', sqlite_select_Query)
+    print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     data = (row for row in x)
@@ -192,6 +192,32 @@ def get_checkbox():
                            'where pageviews.Orchestra=total.Orchestra\n'
                            'order by total.Orchestra,counts desc'
                            )
+    sqlite_select_Query = ('WITH total as\n'
+                           '    ( select Orchestra,sum(counts) as total\n'
+                           '    from (select Orchestra\n'
+                           '    ,event_id, count(*) counts\n'
+                           'from programs_all pa\n'
+                           'where 1=1\n'
+                           '        and date_of_event  between \''+d3_val+'\' and \''+d4_val+'\' \n'
+                           '        and orchestra in '+append_string+'\n'
+                           'group by Orchestra\n'
+                           '    )\n'
+                           '    group by Orchestra),\n'
+                           '\n'
+                           'pageviews2 as\n'
+                           '(select Orchestra, conductor, count(distinct pa.event_id) counts\n'
+                           'from programs_all pa, conductors c\n'
+                           'where pa.event_id = c.event_id\n'
+                           '        and date_of_event  between \''+d3_val+'\' and \''+d4_val+'\' \n'
+                           '        and orchestra in '+append_string+'\n'
+                           'group by Orchestra,conductor)\n'
+                           '\n'
+                           'select total.Orchestra,Conductor,total.total, counts ,\n'
+                           '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                           'from pageviews2,\n'
+                           '    total\n'
+                           'where pageviews2.Orchestra=total.Orchestra\n'
+                           'order by total.Orchestra, share desc')
     print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
@@ -243,7 +269,8 @@ def get_conductor_data():
 
 if __name__ == '__main__':
     try:
-        sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
+        ##sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
+        sqliteConnection = sqlite3.connect('test_1.db')
         cursor = sqliteConnection.cursor()
         print("Database created and Successfully Connected to SQLite")
 

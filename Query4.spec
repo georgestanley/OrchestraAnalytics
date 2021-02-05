@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['Query4.py'],
-             pathex=['D:\\Friedemann'],
+             pathex=['D:\\Friedemann\\OrchestraAnalytics'],
              binaries=[],
              datas=[],
              hiddenimports=[],
