@@ -19,7 +19,7 @@ class Table(tk.Frame):
 
         for head in headings:
             table.heading(head, text=head, anchor=tk.CENTER)
-            table.column(head, anchor=tk.CENTER, width = 100)
+            table.column(head, anchor=tk.CENTER, width=100)
 
         for row in rows:
             table.insert('', tk.END, values=tuple(row))
@@ -27,7 +27,8 @@ class Table(tk.Frame):
         scrolltable = tk.Scrollbar(self, command=table.yview)
         table.configure(yscrollcommand=scrolltable.set)
         scrolltable.pack(side=tk.RIGHT, fill=tk.Y)
-        table.pack(expand=tk.YES,fill=tk.BOTH)
+        table.pack(expand=tk.YES, fill=tk.BOTH)
+
 
 def query_6():
     cursor = sqliteConnection.cursor()
@@ -35,22 +36,20 @@ def query_6():
                            '    ( select Orchestra,sum(counts) as total\n'
                            '    from (select Orchestra\n'
                            '    ,pa.event_id, count(*) counts\n'
-                           'from programs_all pa, program_list pl , mappings_csv mc\n'
+                           'from programs_all pa, program_list pl\n'
                            'where 1=1\n'
                            'and pa.event_id = pl.event_id\n'
-                           'and pl.program = mc.link\n'
                            'group by Orchestra\n'
                            '    )\n'
                            '    group by Orchestra ),\n'
                            '\n'
                            'pageviews2 as\n'
-                           '(select Orchestra,first_name||\' \'||last_name Composer , count(distinct pa.event_id) counts\n'
-                           'from programs_all pa, program_list pl, mappings_csv mc\n'
+                           '(select Orchestra,mc.title Work , pl.program, count(distinct pa.event_id) counts\n'
+                           'from programs_all pa, program_list pl left outer join mappings_csv mc on pl.program=mc.link\n'
                            'where pa.event_id = pl.event_id\n'
-                           'and pl.program= mc.link\n'
-                           'group by Orchestra,Composer)\n'
+                           'group by Orchestra,Work)\n'
                            '\n'
-                           'select total.Orchestra,Composer,total.total, counts ,\n'
+                           'select total.Orchestra,Work,program,total.total, counts ,\n'
                            '    round(((counts *1.0) /total.total)*100,2) as share\n'
                            'from pageviews2,\n'
                            '    total\n'
@@ -61,7 +60,7 @@ def query_6():
     data = (row for row in cursor.fetchall())
     cursor.close()
     root = tk.Tk()
-    table = Table(root, headings=('Orchestra', 'Composer', 'Total', 'Count', 'Share'), rows=data)
+    table = Table(root, headings=('Orchestra', 'Work Title', 'Work Abbrv.', 'Total', 'Count', 'Share'), rows=data)
     table.pack(expand=tk.YES, fill=tk.BOTH)
     root.mainloop()
 
@@ -74,8 +73,8 @@ def get_dates():
 
     d1_val = d1.get()
     d2_val = d2.get()
-    #d1_val = '1900-01-01'
-    #d2_val = '1905-12-31'
+    # d1_val = '1900-01-01'
+    # d2_val = '1905-12-31'
     print('d1 =', d1_val, 'd2=', d2_val)
     cursor = sqliteConnection.cursor()
     sqlite_select_Query = ('WITH total as\n'
@@ -91,34 +90,34 @@ def get_dates():
                            '\' and \''
                            + d2_val
                            + '\' \n'
-                           'group by Orchestra\n'
-                           '    )\n'
-                           '    group by Orchestra ),\n'
-                           '\n'
-                           'pageviews2 as\n'
-                           '(select Orchestra,mc.title Work , pl.program, count(distinct pa.event_id) counts\n'
-                           'from programs_all pa, program_list pl left outer join mappings_csv mc on pl.program=mc.link\n'
-                           'where pa.event_id = pl.event_id\n'
-                           'and pa.date_of_event  between \''
+                             'group by Orchestra\n'
+                             '    )\n'
+                             '    group by Orchestra ),\n'
+                             '\n'
+                             'pageviews2 as\n'
+                             '(select Orchestra,mc.title Work , pl.program, count(distinct pa.event_id) counts\n'
+                             'from programs_all pa, program_list pl left outer join mappings_csv mc on pl.program=mc.link\n'
+                             'where pa.event_id = pl.event_id\n'
+                             'and pa.date_of_event  between \''
                            + d1_val
                            +
                            '\' and \''
                            + d2_val
                            + '\' \n'
-                           'group by Orchestra,Work)\n'
-                           '\n'
-                           'select total.Orchestra,Work,program,total.total, counts ,\n'
-                           '    round(((counts *1.0) /total.total)*100,2) as share\n'
-                           'from pageviews2,\n'
-                           '    total\n'
-                           'where pageviews2.Orchestra=total.Orchestra\n'
-                           'order by total.Orchestra, share desc')                                                                                                                                                               #
+                             'group by Orchestra,Work)\n'
+                             '\n'
+                             'select total.Orchestra,Work,program,total.total, counts ,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from pageviews2,\n'
+                             '    total\n'
+                             'where pageviews2.Orchestra=total.Orchestra\n'
+                             'order by total.Orchestra, share desc')
     print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     data = (row for row in x)
     root = tk.Tk()
-    table = Table(root, headings=('Orchestra', 'Composer', 'Total', 'Count', 'Share'), rows=data)
+    table = Table(root, headings=('Orchestra', 'Work Title', 'Work Abbrv.', 'Total', 'Count', 'Share'), rows=data)
     # print('record count =', type(data))
     table.pack(expand=tk.YES, fill=tk.BOTH)
     root.mainloop()
@@ -142,28 +141,28 @@ def get_dates_csv():
                            '\' and \''
                            + d2_val
                            + '\' \n'
-                           'group by Orchestra\n'
-                           '    )\n'
-                           '    group by Orchestra ),\n'
-                           '\n'
-                           'pageviews2 as\n'
-                           '(select Orchestra,mc.title Work , pl.program, count(distinct pa.event_id) counts\n'
-                           'from programs_all pa, program_list pl left outer join mappings_csv mc on pl.program=mc.link\n'
-                           'where pa.event_id = pl.event_id\n'
-                           'and pa.date_of_event  between \''
+                             'group by Orchestra\n'
+                             '    )\n'
+                             '    group by Orchestra ),\n'
+                             '\n'
+                             'pageviews2 as\n'
+                             '(select Orchestra,mc.title Work , pl.program, count(distinct pa.event_id) counts\n'
+                             'from programs_all pa, program_list pl left outer join mappings_csv mc on pl.program=mc.link\n'
+                             'where pa.event_id = pl.event_id\n'
+                             'and pa.date_of_event  between \''
                            + d1_val
                            +
                            '\' and \''
                            + d2_val
                            + '\' \n'
-                           'group by Orchestra,Work)\n'
-                           '\n'
-                           'select total.Orchestra,Work,program,total.total, counts ,\n'
-                           '    round(((counts *1.0) /total.total)*100,2) as share\n'
-                           'from pageviews2,\n'
-                           '    total\n'
-                           'where pageviews2.Orchestra=total.Orchestra\n'
-                           'order by total.Orchestra, share desc')
+                             'group by Orchestra,Work)\n'
+                             '\n'
+                             'select total.Orchestra,Work,program,total.total, counts ,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from pageviews2,\n'
+                             '    total\n'
+                             'where pageviews2.Orchestra=total.Orchestra\n'
+                             'order by total.Orchestra, share desc')
     # print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
@@ -173,6 +172,7 @@ def get_dates_csv():
     print('output printed')
     cursor.close()
 
+
 def get_chart():
     """
     Creates a chart
@@ -180,51 +180,48 @@ def get_chart():
     d1_val = d1.get()
     d2_val = d2.get()
     n = int(top_n.get())
-    d1_val = '1900-01-01'
-    d2_val = '1910-12-31'
     print('d1 =', d1_val, 'd2=', d2_val)
     cursor = sqliteConnection.cursor()
 
     # print('SQL query = ', sqlite_select_Query)
-    sqlite_select_Query = ('WITH total as\n'
-                           '    (select Orchestra,sum(counts) as total\n'
+    sqlite_select_Query = ('\n'
+                           'WITH total as\n'
+                           '    ( select Orchestra,sum(counts) as total\n'
                            '    from (select Orchestra\n'
-                           '        ,pa.event_id, count(*) counts\n'
-                           '        from programs_all pa, program_list pl, mappings_csv mc\n'
-                           '        where 1=1\n'
-                           '        and pa.event_id = pl.event_id\n'
-                           '        and pl.program = mc.link\n'
-                             'and date_of_event  between \''
+                           '    ,pa.event_id, count(*) counts\n'
+                           'from programs_all pa, program_list pl\n'
+                           'where 1=1\n'
+                           'and pa.event_id = pl.event_id\n'
+                           'and pa.date_of_event  between \''
                            + d1_val
                            +
                            '\' and \''
                            + d2_val
                            + '\' \n'
-                           '        --and pa.orchestra in (\'Vienna Philharmonic\')\n'
-                           '        group by Orchestra)\n'
-                           '    group by Orchestra ),\n'
-                           'pageviews2 as\n'
-                           '    (select Orchestra, first_name||\' \'||last_name Composer, count( pa.event_id) counts\n'
-                           '    from programs_all pa, program_list pl, mappings_csv mc\n'
-                           '    where pa.event_id = pl.event_id\n'
-                           '    and pl.program= mc.link\n'
-                             'and date_of_event  between \''
+                             'group by Orchestra\n'
+                             '    )\n'
+                             '    group by Orchestra ),\n'
+                             '\n'
+                             'pageviews2 as\n'
+                             '(select Orchestra,mc.title Work , pl.program, count(distinct pa.event_id) counts\n'
+                             'from programs_all pa, program_list pl left outer join mappings_csv mc on pl.program=mc.link\n'
+                             'where pa.event_id = pl.event_id\n'
+                             'and pa.date_of_event  between \''
                            + d1_val
                            +
                            '\' and \''
                            + d2_val
                            + '\' \n'
-                           '    --and pa.orchestra in (\'Vienna Philharmonic\')\n'
-                           '    group by Orchestra,composer)\n'
-                           '    select Composer , sum (counts) from (\n'
-                           'select total.Orchestra,Composer,total.total, counts ,\n'
-                           '    round(((counts *1.0) /total.total)*100,2) as share\n'
-                           'from pageviews2,\n'
-                           '    total\n'
-                           'where pageviews2.Orchestra=total.Orchestra\n'
-                           'order by total.Orchestra, share desc\n'
-                           ')group by Composer order by sum(counts) desc \n'
-                           ';')
+                             'group by Orchestra,Work)\n'
+                             '\n'
+                             'select Work , sum(counts) from ( \n'
+                             'select total.Orchestra,Work,program,total.total, counts ,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from pageviews2,\n'
+                             '    total\n'
+                             'where pageviews2.Orchestra=total.Orchestra\n'
+                             'order by total.Orchestra, share desc)\n'
+                             'group by work order by sum(counts)desc;')
     print(sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
@@ -237,13 +234,12 @@ def get_chart():
         # orchestra.append(row[0])
         data.append(row[0])
         values.append(row[1])
-    if len(values)>n:
-        v_others = sum (values[n:])
-        values[n:]= ''
-        data[n:]= ''
+    if len(values) > n:
+        v_others = sum(values[n:])
+        values[n:] = ''
+        data[n:] = ''
         data.append('Others')
         values.append(v_others)
-
 
     print(orchestra)
     print(data)
@@ -288,7 +284,6 @@ def get_chart():
     plt.show()
 
 
-
 def get_checkbox():
     d3_val = d3.get()
     d4_val = d4.get()
@@ -314,118 +309,67 @@ def get_checkbox():
     print(append_string)
 
     cursor = sqliteConnection.cursor()
-    sqlite_select_Query = ('WITH total as\n'
-                           '    (select Orchestra,sum(counts) as total\n'
+
+    sqlite_select_Query = ('\n'
+                           'WITH total as\n'
+                           '    ( select Orchestra,sum(counts) as total\n'
                            '    from (select Orchestra\n'
-                           '        ,pa.event_id, count(*) counts\n'
-                           '        from programs_all pa, program_list pl, mappings_csv mc\n'
-                           '        where 1=1\n'
-                           '        and pa.event_id = pl.event_id\n'
-                           '        and pl.program = mc.link\n'
-                           'and date_of_event  between \''
+                           '    ,pa.event_id, count(*) counts\n'
+                           'from programs_all pa, program_list pl\n'
+                           'where 1=1\n'
+                           'and pa.event_id = pl.event_id\n'
+                           'and pa.date_of_event  between \''
                            + d3_val
                            +
                            '\' and \''
                            + d4_val
                            + '\' \n'
-                           '    and pa.orchestra in '
-                           +append_string
+                             '    and pa.orchestra in '
+                           + append_string
                            + '\n'
-                           '        group by Orchestra)\n'
-                           '    group by Orchestra ),\n'
-                           'pageviews2 as\n'
-                           '    (select Orchestra, first_name||\' \'||last_name Composer, count( pa.event_id) counts\n'
-                           '    from programs_all pa, program_list pl, mappings_csv mc\n'
-                           '    where pa.event_id = pl.event_id\n'
-                           '    and pl.program= mc.link\n'
-                           'and date_of_event  between \''
+                             'group by Orchestra\n'
+                             '    )\n'
+                             '    group by Orchestra ),\n'
+                             '\n'
+                             'pageviews2 as\n'
+                             '(select Orchestra,mc.title Work , pl.program, count(distinct pa.event_id) counts\n'
+                             'from programs_all pa, program_list pl left outer join mappings_csv mc on pl.program=mc.link\n'
+                             'where pa.event_id = pl.event_id\n'
+                             'and pa.date_of_event  between \''
                            + d3_val
                            +
                            '\' and \''
                            + d4_val
                            + '\' \n'
-                           '    and pa.orchestra in '
-                           +append_string
+                             '    and pa.orchestra in '
+                           + append_string
                            + '\n'
-                           '    group by Orchestra,composer)\n'
-                           'select total.Orchestra,Composer,total.total, counts ,\n'
-                           '    round(((counts *1.0) /total.total)*100,2) as share\n'
-                           'from pageviews2,\n'
-                           '    total\n'
-                           'where pageviews2.Orchestra=total.Orchestra\n'
-                           'order by total.Orchestra, share desc'
-                           )
+                             'group by Orchestra,Work)\n'
+                             '\n'
+                             '\n'
+                             'select total.Orchestra,Work,program,total.total, counts ,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from pageviews2,\n'
+                             '    total\n'
+                             'where pageviews2.Orchestra=total.Orchestra\n'
+                             'order by total.Orchestra, share desc;\n')
     print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
     data = (row for row in x)
     root = tk.Tk()
-    table = Table(root, headings=('Orchestra', 'Composer', 'Total-Works', 'Work-Count', 'Share'), rows=data)
+    table = Table(root, headings=('Orchestra', 'Work Title', 'Work Abbrv.', 'Total', 'Count', 'Share'), rows=data)
     # print('record count =', type(data))
     table.pack(expand=tk.YES, fill=tk.BOTH)
     root.mainloop()
 
-
-def populate_composer_list():
-    """
-        Loads a list of all countries
-        :return: List of all countries
-        """
-    cursor = sqliteConnection.cursor()
-    sqlite_select_Query = '''select distinct first_name||' '||last_name composer from mappings_csv order by composer ;'''
-    x = cursor.execute(sqlite_select_Query)
-    conductors = ['Choose a Composer']
-    for row in x:
-        conductors.append(row[0])
-    return conductors
-
-
-def get_composer_data():
-    # TODO: replace the sql query to obtain conductors data
-
-    conductor = variable.get()  # GET the composer name
-    cursor = sqliteConnection.cursor()
-    sqlite_select_Query = ('select pa.*,pl.program,mc.Genre, mc.Title,mc.composition_or_premiere_date\n'
-                           'from programs_all pa, program_list pl, mappings_csv mc\n'
-                           'where 1=1\n'
-                           'and pa.event_id = pl.event_id\n'
-                           'and pl.program=mc.link\n'
-                           'and mc.first_name||\' \'||mc.last_name = \''+conductor+'\'')
-    print(sqlite_select_Query)
-    cursor.execute(sqlite_select_Query)
-    x = cursor.fetchall()
-    data = (row for row in x)
-    root = tk.Tk()
-    table = Table(root, headings=('Event-ID', 'Date', 'Country', 'City', 'Orchestra', 'Program', 'Genre','Title','Composition/premiere Year'),
-                  rows=data)
-    # print('record count =', type(data))
-    table.pack(expand=tk.YES, fill=tk.BOTH)
-    root.mainloop()
-
-def get_validation_result():
-    ### TODO : complete this
-    cursor = sqliteConnection.cursor()
-    sqlite_select_Query = ('select a.event_id,a.program,b.orchestra,b.date_of_event from (\n'
-                           'select * from program_list where lower(program) not in (select lower(link) from mappings_csv))a , programs_all b\n'
-                           'where a.event_id=b.event_id')
-    print(sqlite_select_Query)
-    cursor.execute(sqlite_select_Query)
-    x = cursor.fetchall()
-    data = (row for row in x)
-    root = tk.Tk()
-    table = Table(root, headings=(
-    'Event-ID', 'Program', 'Orchestra', 'Date'),
-                  rows=data)
-    # print('record count =', type(data))
-    table.pack(expand=tk.YES, fill=tk.BOTH)
-    root.mainloop()
 
 def get_chart_orchestra_wise():
     d3_val = d3.get()
     d4_val = d4.get()
-    n = int(top_n2.get()) if top_n2.get().isnumeric() else 10 ###TODO : add error catch block
-    #d3_val = '1900-01-01'
-    #d4_val = '1905-12-31'
+    n = int(top_n2.get()) if top_n2.get().isnumeric() else 10  ###TODO : add error catch block
+    # d3_val = '1900-01-01'
+    # d4_val = '1905-12-31'
     print('d1 =', d3_val, 'd2=', d4_val)
     cursor = sqliteConnection.cursor()
 
@@ -464,8 +408,8 @@ def get_chart_orchestra_wise():
                            + d4_val
                            + '\' \n'
                              '    and pa.orchestra in '
-                           +append_string
-                           +'\n'
+                           + append_string
+                           + '\n'
                              '        group by Orchestra)\n'
                              '    group by Orchestra ),\n'
                              'pageviews2 as\n'
@@ -480,8 +424,8 @@ def get_chart_orchestra_wise():
                            + d4_val
                            + '\' \n'
                              '    and pa.orchestra in '
-                           +append_string
-                           +'\n'
+                           + append_string
+                           + '\n'
                              '    group by Orchestra,composer)\n'
                              '    select Composer , sum (counts) from (\n'
                              'select total.Orchestra,Composer,total.total, counts ,\n'
@@ -492,6 +436,51 @@ def get_chart_orchestra_wise():
                              'order by total.Orchestra, share desc\n'
                              ')group by Composer order by sum(counts) desc \n'
                              ';')
+    sqlite_select_Query = ('\n'
+                           'WITH total as\n'
+                           '    ( select Orchestra,sum(counts) as total\n'
+                           '    from (select Orchestra\n'
+                           '    ,pa.event_id, count(*) counts\n'
+                           'from programs_all pa, program_list pl\n'
+                           'where 1=1\n'
+                           'and pa.event_id = pl.event_id\n'
+                           'and pa.date_of_event  between \''
+                           + d3_val
+                           +
+                           '\' and \''
+                           + d4_val
+                           + '\' \n'
+                             '    and pa.orchestra in '
+                           + append_string
+                           + '\n'
+                             'group by Orchestra\n'
+                             '    )\n'
+                             '    group by Orchestra ),\n'
+                             '\n'
+                             'pageviews2 as\n'
+                             '(select Orchestra,mc.title Work , pl.program, count(distinct pa.event_id) counts\n'
+                             'from programs_all pa, program_list pl left outer join mappings_csv mc on pl.program=mc.link\n'
+                             'where pa.event_id = pl.event_id\n'
+                             'and pa.date_of_event  between \''
+                           + d3_val
+                           +
+                           '\' and \''
+                           + d4_val
+                           + '\' \n'
+                             '    and pa.orchestra in '
+                           + append_string
+                           + '\n'
+                             'group by Orchestra,Work)\n'
+                             '\n'
+                             '\n'
+                             '    select Work , sum (counts) from (\n'
+                             'select total.Orchestra,Work,program,total.total, counts ,\n'
+                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                             'from pageviews2,\n'
+                             '    total\n'
+                             'where pageviews2.Orchestra=total.Orchestra\n'
+                             'order by total.Orchestra, share desc\n'
+                           ')group by Work order by sum(counts) desc; \n')
     print(sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
@@ -502,10 +491,10 @@ def get_chart_orchestra_wise():
         data.append(row[0])
         values.append(row[1])
 
-    if len(values)>n:
-        v_others = sum (values[n:])
-        values[n:]= ''
-        data[n:]= ''
+    if len(values) > n:
+        v_others = sum(values[n:])
+        values[n:] = ''
+        data[n:] = ''
         data.append('Others')
         values.append(v_others)
     print(data)
@@ -517,6 +506,64 @@ def get_chart_orchestra_wise():
     fig = plt.figure(figsize=(10, 7))
     plt.pie(values, labels=data, autopct='%1.1f%%')
     plt.show()
+
+
+def populate_composer_list():
+    """
+        Loads a list of all countries
+        :return: List of all countries
+        """
+    cursor = sqliteConnection.cursor()
+    sqlite_select_Query = '''select distinct  title from mappings_csv order by title ;'''
+    x = cursor.execute(sqlite_select_Query)
+    conductors = ['Choose a Composer']
+    for row in x:
+        conductors.append(row[0])
+    return conductors
+
+
+def get_composer_data():
+    # TODO: replace the sql query to obtain conductors data
+
+    work = variable.get()  # GET the composer name
+    cursor = sqliteConnection.cursor()
+    sqlite_select_Query = ('select pa.*,pl.program,mc.Genre, mc.Title,mc.composition_or_premiere_date\n'
+                           'from programs_all pa, program_list pl, mappings_csv mc\n'
+                           'where 1=1\n'
+                           'and pa.event_id = pl.event_id\n'
+                           'and pl.program=mc.link\n'
+                           'and mc.title = \'' + work + '\'')
+    print(sqlite_select_Query)
+    cursor.execute(sqlite_select_Query)
+    x = cursor.fetchall()
+    data = (row for row in x)
+    root = tk.Tk()
+    table = Table(root, headings=(
+        'Event-ID', 'Date', 'Country', 'City', 'Orchestra', 'Work Abbrv.', 'Genre', 'Work Title', 'Composition/premiere Year'),
+                  rows=data)
+    # print('record count =', type(data))
+    table.pack(expand=tk.YES, fill=tk.BOTH)
+    root.mainloop()
+
+
+def get_validation_result():
+    ### not needed.
+    cursor = sqliteConnection.cursor()
+    sqlite_select_Query = ('select a.event_id,a.program,b.orchestra,b.date_of_event from (\n'
+                           'select * from program_list where lower(program) not in (select lower(link) from mappings_csv))a , programs_all b\n'
+                           'where a.event_id=b.event_id')
+    print(sqlite_select_Query)
+    cursor.execute(sqlite_select_Query)
+    x = cursor.fetchall()
+    data = (row for row in x)
+    root = tk.Tk()
+    table = Table(root, headings=(
+        'Event-ID', 'Program', 'Orchestra', 'Date'),
+                  rows=data)
+    # print('record count =', type(data))
+    table.pack(expand=tk.YES, fill=tk.BOTH)
+    root.mainloop()
+
 
 if __name__ == '__main__':
     try:
@@ -540,7 +587,7 @@ if __name__ == '__main__':
 
     # print("Query output is")
 
-    lbl = Label(window, text="Orchestra(s)+Composers, "
+    lbl = Label(window, text="Orchestra(s)+Works, "
                              " within a period of choice; "
                              " results both in absolute and "
                              "\n proportional figures",
@@ -566,12 +613,12 @@ if __name__ == '__main__':
     btn.grid(column=4, row=2)
     top_n = Entry(window)
     top_n.insert(END, 'Input for top X results')
-    top_n.grid(column=5,row=2,sticky='W')
+    top_n.grid(column=5, row=2, sticky='W')
     ##TODO : from here onwards
     btn = Button(window, text='Create Chart', command=get_chart)
     btn.grid(column=6, row=2)
 
-    row_n=3
+    row_n = 3
     lbl2 = Label(window, text="Query_3 :: Query Orchestra-wise", borderwidth=2, relief='ridge')
     lbl2.grid(column=0, row=3, sticky=E + W + S + N, rowspan=5)
 
@@ -581,20 +628,20 @@ if __name__ == '__main__':
     d4.grid(column=2, row=row_n, sticky='W', rowspan=5)
 
     c1 = IntVar()
-    Checkbutton(window, text="Vienna Philharmonic", variable=c1).grid(row=row_n+4, column=3, sticky=W)
+    Checkbutton(window, text="Vienna Philharmonic", variable=c1).grid(row=row_n + 4, column=3, sticky=W)
     c2 = IntVar()
     Checkbutton(window, text="Bamberg Symphony", variable=c2).grid(row=row_n, column=3, sticky=W)
     c3 = IntVar()
-    Checkbutton(window, text="Philharmonia Hungarica", variable=c3).grid(row=row_n+3, column=3, sticky=W)
+    Checkbutton(window, text="Philharmonia Hungarica", variable=c3).grid(row=row_n + 3, column=3, sticky=W)
     c4 = IntVar()
-    Checkbutton(window, text="Gewandhaus Leipzig", variable=c4).grid(row=row_n+2, column=3, sticky=W)
+    Checkbutton(window, text="Gewandhaus Leipzig", variable=c4).grid(row=row_n + 2, column=3, sticky=W)
     c5 = IntVar()
-    Checkbutton(window, text="Berlin Philharmonic", variable=c5).grid(row=row_n+1, column=3, sticky=W)
+    Checkbutton(window, text="Berlin Philharmonic", variable=c5).grid(row=row_n + 1, column=3, sticky=W)
 
     btn = Button(window, text='Fetch Query3', command=get_checkbox)
     btn.grid(column=4, row=row_n, sticky='W', rowspan=5)
     top_n2 = Entry(window)
-    top_n2.insert(END,'Input for top X results')
+    top_n2.insert(END, 'Input for top X results')
     top_n2.grid(column=5, row=row_n, sticky='W', rowspan=5)
     btn = Button(window, text='Get Charts', command=get_chart_orchestra_wise)
     btn.grid(column=6, row=row_n, sticky='W', rowspan=5)
@@ -613,12 +660,13 @@ if __name__ == '__main__':
     popupMenu.grid(row=row_n, column=1)
     btn = Button(window, text='Execute', command=get_composer_data)
     btn.grid(column=2, row=row_n)
-
+    '''
     row_n = 9
     lbl4 = Label(window, text='Validate data')
     lbl4.grid(row=row_n, column=0)
     btn = Button(window, text='Execute', command=get_validation_result)
     btn.grid(column=2, row=row_n)
+    '''
 
     window.mainloop()
 

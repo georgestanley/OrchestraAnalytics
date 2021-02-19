@@ -178,8 +178,6 @@ def get_chart():
     d1_val = d1.get()
     d2_val = d2.get()
     n = int(top_n.get())
-    d1_val = '1900-01-01'
-    d2_val = '1910-12-31'
     print('d1 =', d1_val, 'd2=', d2_val)
     cursor = sqliteConnection.cursor()
 
