@@ -4,6 +4,7 @@ import tkinter.ttk as ttk
 from tkinter import *
 from tkinter.ttk import *
 import sqlite3
+from SqlConnection import sqliteConnection
 
 
 # import table_demo as td
@@ -79,23 +80,23 @@ def get_dates():
                            "from programs_all pa\n"
                            "where 1=1\n"
                            "    and date_of_event  between \'" + d1_val + "\' and \'" + d2_val + "\' \n"
-                         "group by Orchestra\n"
-                         "    )\n"
-                         "    group by Orchestra ),\n"
-                         "\n"
-                         "pageviews2 as\n"
-                         "(select Orchestra, conductor, count(distinct pa.event_id) counts\n"
-                         "from programs_all pa, conductors c\n"
-                         "where pa.event_id = c.event_id\n"
-                        "    and date_of_event  between \'" + d1_val + "\' and \'" + d2_val + "\' \n"
-                         "group by Orchestra,conductor)\n"
-                         "\n"
-                         "select total.Orchestra,Conductor,total.total, counts ,\n"
-                         "    round(((counts *1.0) /total.total)*100,2) as share\n"
-                         "from pageviews2,\n"
-                         "    total\n"
-                         "where pageviews2.Orchestra=total.Orchestra\n"
-                         "order by total.Orchestra, share desc")
+                                                                                                 "group by Orchestra\n"
+                                                                                                 "    )\n"
+                                                                                                 "    group by Orchestra ),\n"
+                                                                                                 "\n"
+                                                                                                 "pageviews2 as\n"
+                                                                                                 "(select Orchestra, conductor, count(distinct pa.event_id) counts\n"
+                                                                                                 "from programs_all pa, conductors c\n"
+                                                                                                 "where pa.event_id = c.event_id\n"
+                                                                                                 "    and date_of_event  between \'" + d1_val + "\' and \'" + d2_val + "\' \n"
+                                                                                                                                                                       "group by Orchestra,conductor)\n"
+                                                                                                                                                                       "\n"
+                                                                                                                                                                       "select total.Orchestra,Conductor,total.total, counts ,\n"
+                                                                                                                                                                       "    round(((counts *1.0) /total.total)*100,2) as share\n"
+                                                                                                                                                                       "from pageviews2,\n"
+                                                                                                                                                                       "    total\n"
+                                                                                                                                                                       "where pageviews2.Orchestra=total.Orchestra\n"
+                                                                                                                                                                       "order by total.Orchestra, share desc")
     print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
@@ -118,9 +119,7 @@ def get_dates_csv():
                            'from programs_all pa, conductors c\n'
                            'where pa.event_id = c.event_id\n'
                            'and date_of_event  between \'' + d1_val +
-                           # '1900-01-01\' '
                            '\' and \'' + d2_val +
-                           # '1920-01-01\'\n'
                            '\' group by Orchestra,conductor)\n'
                            '    group by Orchestra )\n'
                            '\n'
@@ -169,55 +168,44 @@ def get_checkbox():
     print(append_string)
 
     cursor = sqliteConnection.cursor()
-    sqlite_select_Query = ('\n'
-                           'WITH total as\n'
-                           '    ( select Orchestra,sum(counts) as total\n'
-                           '    from (select Orchestra, conductor, count(*) counts\n'
-                           '        from programs_all pa, conductors c\n'
-                           '        where pa.event_id = c.event_id\n'
-                           '        and orchestra in '+append_string+'\n'
-                           '        and date_of_event  between \''+d3_val+'\' and \''+d4_val+'\' \n'
-                           '        group by Orchestra,conductor)\n'
-                           '    group by Orchestra )\n'
-                           '\n'
-                           'select total.Orchestra,Conductor,total.total, counts ,\n'
-                           '    round(((counts *1.0) /total.total)*100,2) as share\n'
-                           'from (select Orchestra, conductor, count(*) counts\n'
-                           '    from programs_all pa, conductors c\n'
-                           '    where pa.event_id = c.event_id\n'
-                            '        and orchestra in '+append_string+'\n'
-                           '        and date_of_event  between \''+d3_val+'\' and \''+d4_val+'\' \n'
-                           'group by Orchestra,conductor) pageviews,\n'
-                           '    total\n'
-                           'where pageviews.Orchestra=total.Orchestra\n'
-                           'order by total.Orchestra,counts desc'
-                           )
     sqlite_select_Query = ('WITH total as\n'
                            '    ( select Orchestra,sum(counts) as total\n'
                            '    from (select Orchestra\n'
                            '    ,event_id, count(*) counts\n'
                            'from programs_all pa\n'
                            'where 1=1\n'
-                           '        and date_of_event  between \''+d3_val+'\' and \''+d4_val+'\' \n'
-                           '        and orchestra in '+append_string+'\n'
-                           'group by Orchestra\n'
-                           '    )\n'
-                           '    group by Orchestra),\n'
-                           '\n'
-                           'pageviews2 as\n'
-                           '(select Orchestra, conductor, count(distinct pa.event_id) counts\n'
-                           'from programs_all pa, conductors c\n'
-                           'where pa.event_id = c.event_id\n'
-                           '        and date_of_event  between \''+d3_val+'\' and \''+d4_val+'\' \n'
-                           '        and orchestra in '+append_string+'\n'
-                           'group by Orchestra,conductor)\n'
-                           '\n'
-                           'select total.Orchestra,Conductor,total.total, counts ,\n'
-                           '    round(((counts *1.0) /total.total)*100,2) as share\n'
-                           'from pageviews2,\n'
-                           '    total\n'
-                           'where pageviews2.Orchestra=total.Orchestra\n'
-                           'order by total.Orchestra, share desc')
+                           '        and date_of_event  between \''
+                           + d3_val
+                           + '\' and \''
+                           + d4_val
+                           + '\' \n'
+                         '        and orchestra in '
+                           + append_string
+                           + '\n'
+                       'group by Orchestra\n'
+                       '    )\n'
+                       '    group by Orchestra),\n'
+                       '\n'
+                       'pageviews2 as\n'
+                       '(select Orchestra, conductor, count(distinct pa.event_id) counts\n'
+                       'from programs_all pa, conductors c\n'
+                       'where pa.event_id = c.event_id\n'
+                       '        and date_of_event  between \''
+                           + d3_val
+                           + '\' and \''
+                           + d4_val
+                           + '\' \n'
+                     '        and orchestra in '
+                           + append_string
+                           + '\n'
+                       'group by Orchestra,conductor)\n'
+                       '\n'
+                       'select total.Orchestra,Conductor,total.total, counts ,\n'
+                       '    round(((counts *1.0) /total.total)*100,2) as share\n'
+                       'from pageviews2,\n'
+                       '    total\n'
+                       'where pageviews2.Orchestra=total.Orchestra\n'
+                       'order by total.Orchestra, share desc')
     print('SQL query = ', sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
@@ -227,6 +215,7 @@ def get_checkbox():
     # print('record count =', type(data))
     table.pack(expand=tk.YES, fill=tk.BOTH)
     root.mainloop()
+
 
 def populate_conductor_list():
     """
@@ -241,19 +230,20 @@ def populate_conductor_list():
         conductors.append(row[0])
     return conductors
 
+
 def get_conductor_data():
     # TODO: replace the sql query to obtain conductors data
 
     conductor = variable.get()  # GET the country name
     cursor = sqliteConnection.cursor()
     sqlite_select_Query = (
-        'select pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra,group_concat(pl.program) program, group_concat(distinct c.conductor) conductor\n'
-        ' from programs_all pa \n'
-        '     left  join program_list pl on pa.event_id=pl.event_id\n'
-        '     left  join conductors c on pa.event_id=c.event_id\n'
-        'where 1=1\n'
-        'and c.conductor =\''+conductor+'\'\n'
-        'group by pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra')
+            'select pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra,group_concat(pl.program) program, group_concat(distinct c.conductor) conductor\n'
+            ' from programs_all pa \n'
+            '     left  join program_list pl on pa.event_id=pl.event_id\n'
+            '     left  join conductors c on pa.event_id=c.event_id\n'
+            'where 1=1\n'
+            'and c.conductor =\'' + conductor + '\'\n'
+                                                'group by pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra')
     print(sqlite_select_Query)
     cursor.execute(sqlite_select_Query)
     x = cursor.fetchall()
@@ -266,11 +256,10 @@ def get_conductor_data():
     root.mainloop()
 
 
-
 if __name__ == '__main__':
     try:
-        ##sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
-        sqliteConnection = sqlite3.connect('test_1.db')
+        # sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
+        # sqliteConnection = sqlite3.connect('test_1.db')
         cursor = sqliteConnection.cursor()
         print("Database created and Successfully Connected to SQLite")
 
@@ -315,7 +304,7 @@ if __name__ == '__main__':
     btn.grid(column=4, row=2)
 
     #
-    row_n=3
+    row_n = 3
     lbl2 = Label(window, text="Query_3 :: Query Orchestra-wise", borderwidth=2, relief='ridge')
     lbl2.grid(column=0, row=row_n, sticky=E + W + S + N, rowspan=5)
     d3 = Entry(window)
@@ -324,15 +313,15 @@ if __name__ == '__main__':
     d4.grid(column=2, row=row_n, sticky='W', rowspan=5)
 
     c1 = IntVar()
-    Checkbutton(window, text="Vienna Philharmonic", variable=c1).grid(row=row_n+4, column=4, sticky=W)
+    Checkbutton(window, text="Vienna Philharmonic", variable=c1).grid(row=row_n + 4, column=4, sticky=W)
     c2 = IntVar()
     Checkbutton(window, text="Bamberg Symphony", variable=c2).grid(row=row_n, column=4, sticky=W)
     c3 = IntVar()
-    Checkbutton(window, text="Philharmonia Hungarica", variable=c3).grid(row=row_n+3, column=4, sticky=W)
+    Checkbutton(window, text="Philharmonia Hungarica", variable=c3).grid(row=row_n + 3, column=4, sticky=W)
     c4 = IntVar()
-    Checkbutton(window, text="Gewandhaus Leipzig", variable=c4).grid(row=row_n+2, column=4, sticky=W)
+    Checkbutton(window, text="Gewandhaus Leipzig", variable=c4).grid(row=row_n + 2, column=4, sticky=W)
     c5 = IntVar()
-    Checkbutton(window, text="Berlin Philharmonic", variable=c5).grid(row=row_n+1, column=4, sticky=W)
+    Checkbutton(window, text="Berlin Philharmonic", variable=c5).grid(row=row_n + 1, column=4, sticky=W)
 
     btn = Button(window, text='Fetch Query3', command=get_checkbox)
     btn.grid(column=3, row=3, rowspan=5)

@@ -5,6 +5,8 @@ import tkinter.ttk as ttk
 from tkinter import *
 from tkinter.ttk import *
 import sqlite3
+from SqlConnection import sqliteConnection
+
 
 
 # import table_demo as td
@@ -250,37 +252,7 @@ def get_chart():
 
     fig = plt.figure(figsize=(10, 7))
     plt.pie(values, labels=data, autopct='%1.1f%%')
-    '''
-    Use this below block of code if you need to fetch data of multiple orchestras together
-    and later dsiplay them are seaprate graphs
 
-    data1 = []
-    values1 = []
-    a_prev = ''
-    i = 0
-    figs = []
-
-    for a,b,c  in zip(orchestra,data,values):
-        #print(a,b,c)
-        if a_prev == a or a_prev == '':
-            data1.append(b)
-            values1.append(c)
-            a_prev = a
-            #print(data1,values1)
-        elif a_prev != a :
-            figs.append( plt.figure(figsize=(10, 7)))
-            #print(values1,data1)
-            plt.pie(values1, labels=data1,autopct='%1.1f%%')
-            plt.title(a_prev)
-            a_prev = a
-            data1 = [b]
-            values1 = [c]
-
-    figs.append(plt.figure(figsize=(10, 7)))
-    plt.pie(values1, labels=data1,autopct='%1.1f%%')
-    plt.title(a_prev)
-    #print(values1, data1)
-    '''
     plt.show()
 
 
@@ -393,49 +365,7 @@ def get_chart_orchestra_wise():
         append_string = append_string + ("," if len(append_string) > 0 else "") + "\"Berlin Philharmonic\""
     append_string = "(" + append_string + ")"
     print(append_string)
-    sqlite_select_Query = ('WITH total as\n'
-                           '    (select Orchestra,sum(counts) as total\n'
-                           '    from (select Orchestra\n'
-                           '        ,pa.event_id, count(*) counts\n'
-                           '        from programs_all pa, program_list pl, mappings_csv mc\n'
-                           '        where 1=1\n'
-                           '        and pa.event_id = pl.event_id\n'
-                           '        and pl.program = mc.link\n'
-                           'and date_of_event  between \''
-                           + d3_val
-                           +
-                           '\' and \''
-                           + d4_val
-                           + '\' \n'
-                             '    and pa.orchestra in '
-                           + append_string
-                           + '\n'
-                             '        group by Orchestra)\n'
-                             '    group by Orchestra ),\n'
-                             'pageviews2 as\n'
-                             '    (select Orchestra, first_name||\' \'||last_name Composer, count( pa.event_id) counts\n'
-                             '    from programs_all pa, program_list pl, mappings_csv mc\n'
-                             '    where pa.event_id = pl.event_id\n'
-                             '    and pl.program= mc.link\n'
-                             'and date_of_event  between \''
-                           + d3_val
-                           +
-                           '\' and \''
-                           + d4_val
-                           + '\' \n'
-                             '    and pa.orchestra in '
-                           + append_string
-                           + '\n'
-                             '    group by Orchestra,composer)\n'
-                             '    select Composer , sum (counts) from (\n'
-                             'select total.Orchestra,Composer,total.total, counts ,\n'
-                             '    round(((counts *1.0) /total.total)*100,2) as share\n'
-                             'from pageviews2,\n'
-                             '    total\n'
-                             'where pageviews2.Orchestra=total.Orchestra\n'
-                             'order by total.Orchestra, share desc\n'
-                             ')group by Composer order by sum(counts) desc \n'
-                             ';')
+
     sqlite_select_Query = ('\n'
                            'WITH total as\n'
                            '    ( select Orchestra,sum(counts) as total\n'
@@ -525,7 +455,7 @@ def populate_composer_list():
 def get_composer_data():
     # TODO: replace the sql query to obtain conductors data
 
-    work = variable.get()  # GET the composer name
+    work = popupMenu.get()  # GET the composer name
     cursor = sqliteConnection.cursor()
     sqlite_select_Query = ('select pa.*,pl.program,mc.Genre, mc.Title,mc.composition_or_premiere_date\n'
                            'from programs_all pa, program_list pl, mappings_csv mc\n'
@@ -654,12 +584,13 @@ if __name__ == '__main__':
     choices = populate_composer_list()
     variable = StringVar(window)  # Creates a TKinter Variable
     variable.set(choices[0])  # set default value
-    lbl3 = Label(window, text="Query the entire database for the given Composer")
+    lbl3 = Label(window, text="Query the entire database for the given Work")
     lbl3.grid(row=row_n, column=0)
-    popupMenu = OptionMenu(window, variable, *choices)
-    popupMenu.grid(row=row_n, column=1)
+    #popupMenu = OptionMenu(window, variable, *choices)
+    popupMenu = ttk.Combobox(window,values=choices, width=30)
+    popupMenu.grid(row=row_n, column=1, columnspan=2)
     btn = Button(window, text='Execute', command=get_composer_data)
-    btn.grid(column=2, row=row_n)
+    btn.grid(column=3, row=row_n)
     '''
     row_n = 9
     lbl4 = Label(window, text='Validate data')
@@ -667,7 +598,5 @@ if __name__ == '__main__':
     btn = Button(window, text='Execute', command=get_validation_result)
     btn.grid(column=2, row=row_n)
     '''
-
     window.mainloop()
-
     sqliteConnection.close()

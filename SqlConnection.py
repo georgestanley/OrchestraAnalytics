@@ -1,8 +1,8 @@
 import sqlite3
 
 try:
-    sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
-    ##sqliteConnection = sqlite3.connect('test_1.db')
+    #sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
+    sqliteConnection = sqlite3.connect('test_1.db')
     cursor = sqliteConnection.cursor()
     print("Database created and Successfully Connected to SQLite")
 
