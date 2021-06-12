@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['Query5.py'],
+a = Analysis(['query5.py'],
              pathex=['D:\\Friedemann\\OrchestraAnalytics'],
              binaries=[],
              datas=[],
@@ -23,7 +23,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='Query5',
+          name='query5',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,

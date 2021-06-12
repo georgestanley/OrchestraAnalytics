@@ -721,7 +721,7 @@ if __name__ == '__main__':
     lbl4 = Label(window, text="")
     lbl4.grid(row=row_n, column=0, sticky=E + W + S + N)
 
-    row_n = 12
+    row_n = 13
     choices = populate_city_list()
     variable = StringVar(window)  # Creates a TKinter Variable
     variable.set(choices[0])  # set default value
@@ -730,14 +730,20 @@ if __name__ == '__main__':
     # popupMenu = OptionMenu(window, variable, *choices)
     w2 = ttk.Combobox(window, values=choices)
     w2.grid(row=row_n, column=1)
-    lbl5 = Label(window, text="Dates: (YYYY-MM-DD)", borderwidth=2)
-    lbl5.grid(row=row_n, column=2, sticky=E + W + S + N)
     d5 = Entry(window)
     d6 = Entry(window)
     d5.grid(column=3, row=row_n, sticky='W')
     d6.grid(column=4, row=row_n, sticky='W')
     btn = Button(window, text='Execute', command=get_city_data_timewise)
     btn.grid(column=5, row=row_n)
+
+    row_n = 12
+    lbl3 = Label(window, text="City")
+    lbl3.grid(row=row_n, column=1, sticky=N + E + W + S, columnspan=2)
+    lbl3 = Label(window, text="From (YYYY-MM-DD)")
+    lbl3.grid(row=row_n, column=3, sticky=N + E + W + S)
+    lbl3 = Label(window, text="To (YYYY-MM-DD)")
+    lbl3.grid(row=row_n, column=4, sticky=N + E + W + S)
 
     window.mainloop()
 

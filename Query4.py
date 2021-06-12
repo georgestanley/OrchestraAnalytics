@@ -234,7 +234,7 @@ def populate_conductor_list():
 def get_conductor_data():
     # TODO: replace the sql query to obtain conductors data
 
-    conductor = variable.get()  # GET the country name
+    conductor = popupMenu.get()  # GET the country name
     cursor = sqliteConnection.cursor()
     sqlite_select_Query = (
             'select pa.event_id, pa.date_of_event, pa.country, pa.place, pa.Orchestra,group_concat(pl.program) program, group_concat(distinct c.conductor) conductor\n'
@@ -336,10 +336,10 @@ if __name__ == '__main__':
     variable.set(choices[0])  # set default value
     lbl3 = Label(window, text="Query the entire database for the given Conductor")
     lbl3.grid(row=row_n, column=0)
-    popupMenu = OptionMenu(window, variable, *choices)
-    popupMenu.grid(row=row_n, column=1)
+    popupMenu = ttk.Combobox(window, values=choices, width=30)
+    popupMenu.grid(row=row_n, column=1, columnspan=2)
     btn = Button(window, text='Execute', command=get_conductor_data)
-    btn.grid(column=2, row=row_n)
+    btn.grid(column=3, row=row_n)
 
     window.mainloop()
 

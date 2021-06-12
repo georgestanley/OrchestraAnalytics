@@ -33,6 +33,7 @@ class SSG(tk.Frame):
 
 
 def get_all_data():
+
     cursor = sqliteConnection.cursor()
 
     sqlite_select_Query = ("with total as\n"
@@ -441,6 +442,14 @@ if __name__ == '__main__':
     window = tk.Tk()
     window.title("Orchestra Tours Data - Dr. Friedemann Pestel")
     window.geometry('1000x500')
+
+    cursor = sqliteConnection.cursor()
+    #print("Database created and Successfully Connected to SQLite")
+
+    sqlite_select_Query = "select sqlite_version();"
+    cursor.execute(sqlite_select_Query)
+    record = cursor.fetchall()
+    print("SQLite Database Version is: ", record)
 
     # print("Query output is")
 
