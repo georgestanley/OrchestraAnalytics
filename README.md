@@ -1,13 +1,13 @@
-## Foobar
+## About the Repo..
 
 Orchestra Analytics project
+
+
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
-```bash
-pip install foobar
-```
+Download the ```.exe``` files from ```dist/``` folder onto your windows systems.
+Currently files have been tested only on Win10
+No pip install available
 
 ## Usage
 
