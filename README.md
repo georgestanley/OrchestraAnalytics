@@ -5,7 +5,7 @@ Orchestra Analytics project
 
 ## Installation
 
-Download the ```.exe``` files from ```dist/``` folder on your windows systems.
+Download the ```.exe``` files from ```dist/``` folder onto your windows systems.
 Currently files have been tested only on Win10
 No pip install available
 
