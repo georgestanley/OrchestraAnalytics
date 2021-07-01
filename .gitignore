@@ -1,0 +1,5 @@
+*.spec
+test_1.db
+dist/
+build/
+.idea/
