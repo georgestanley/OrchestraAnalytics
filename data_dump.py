@@ -4,7 +4,9 @@ import tkinter.ttk as ttk
 from tkinter import *
 from tkinter.ttk import *
 import sqlite3
-from Query4 import Table
+from Table import Table
+from SqlConnection import sqliteConnection
+
 
 def get_checkbox():
     var1 = c1.get()
@@ -87,7 +89,7 @@ def get_checkbox_csv():
 
 if __name__ == '__main__':
     try:
-        sqliteConnection = sqlite3.connect('test_1.db')
+        #sqliteConnection = sqlite3.connect('test_1.db')
         cursor = sqliteConnection.cursor()
         print("Database created and Successfully Connected to SQLite")
 

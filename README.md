@@ -12,12 +12,13 @@ No pip install available
 ## Usage
 
 ```python
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
 ```
+
+##Creating exe file
+```python
+pyinstaller <file_name>.py -w --onefile
+```
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

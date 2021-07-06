@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import *
 from tkinter.ttk import *
 import sqlite3
-from Query4 import Table
+from Table import Table
+from SqlConnection import sqliteConnection
+
 
 
 def get_to_be_deleted_data():
@@ -63,15 +65,17 @@ def insert_data():
 
 
 
-    insert_query = ("insert into programs_temp (Datum, Land, Ort, Dirigent, Program,Orchestra ) values ('"
-                    + e1_val + "','"
-                    + e2_val + "','"
-                    + e3_val + "','"
-                    + e4_val + "','"
-                    + e5_val + "','"
-                    + e6_val + "');")
+    insert_query = ("insert into programs_temp (Datum, Land, Ort, Dirigent, Program,Orchestra ) values (\""
+                    + e1_val + "\",\""
+                    + e2_val + "\",\""
+                    + e3_val + "\",\""
+                    + e4_val + "\",\""
+                    + e5_val + "\",\""
+                    + e6_val + "\")")
     print(insert_query)
     cursor.execute(insert_query)
+    #Bee 67, Str 40, Straw Feu d'artifice, Wag 103, Wag 86d/Trauermarsch
+
 
     max_event_id_query = ("select max(event_id) from programs_temp;")
     cursor.execute(max_event_id_query)
@@ -123,7 +127,7 @@ def insert_data():
 
 if __name__ == '__main__':
     try:
-        sqliteConnection = sqlite3.connect('C:\\sqlite\\test_1.db')
+        #sqliteConnection = sqlite3.connect('test_1.db')
         cursor = sqliteConnection.cursor()
         print("Database created and Successfully Connected to SQLite")
 
