@@ -3,7 +3,7 @@
 This Repo contains the codes developed as part of my HiWi job under Dr. Friedemann Pestel. 10 Custom dashboards were created to do statistical tasks on top of data collect by Dr Pestel for his research work.
 
 
-##Screenshots
+## Screenshots
 Dashboard for Orhctesra Composer analytics.
 ![Query 5 Dashboard](screenshots/query5.PNG?raw=true "query5_dashboard")
 Result for above selected inputs
