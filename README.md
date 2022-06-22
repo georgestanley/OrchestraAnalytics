@@ -1,7 +1,12 @@
 ## About the Repo..
 
 Orchestra Analytics project
+Dashboard for Orhctesra Composer analytics.
 ![Query 5 Dashboard](screenshots/query5.PNG?raw=true "query5_dashboard")
+Result for above selected inputs
+![Query 5 Results](screenshots/query6_op.PNG?raw=true "query5_result")
+Graph for above result
+![Query 5 graph](screenshots/query5_graph.PNG?raw=true "query5_graph")
 
 
 ## Installation
