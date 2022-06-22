@@ -1,6 +1,7 @@
 ## About the Repo..
 
 Orchestra Analytics project
+![Query 5 Dashboard](screenshots/query5.PNG?raw=true "query5_dashboard")
 
 
 ## Installation
